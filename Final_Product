@@ -1,0 +1,304 @@
+---
+title: Factors Affecting Animal Richness in Aquatic Environments in Madison, Wisconsin
+author: "Chenjia Liu, Claire Pajka, Tani Valdez"
+---
+
+## ** Factors Affecting Animal Richness in Aquatic Environments in Madison, Wisconsin: By Chenjia Liu, Claire Pajka, Tani Valdez **
+
+\newpage
+
+## **1. INTRODUCTION**
+As urbanization and development continue to expand, there has been major concern that anthropogenic changes could affect species diversity and community composition. On a global scale, habitat loss, disturbance, and non-native species introduction has reduced the number of native species, causing a decline in biodiversity. At the sub-global scale, the introduction of exotic species can offset the loss of native species, thus resulting in greater diversity for certain regions (Sax & Gaines, 2003). To address urbanization and development, policies have been promoted to address blue areas, supporting biodiversity. Typically, urban biodiversity is partially connected to rural ones through corridors and can contribute to conservation of biodiversity. However, the management of ponds can affect biodiversity: polluted ponds can act as ecological traps, decreasing vulnerable populations. Additionally, man-made ponds are constructed by and for people, focusing less on providing regulating and provision ecosystem services but cultural services (Oertli & Parris, 2019).
+	
+Our research aims to analyze the impact of various aquatic environmental factors on species richness in lakes around Madison, Wisconsin. We will specifically examine the influence of salinity, dissolved oxygen levels, conductivity, pond type, pH, chloride, and water temperature on species richness. Additionally, we intend to investigate differences in species richness between urban and rural ponds within the study area. Our study's null hypothesis posits that changes in these environmental factors do not affect species richness. Our alternative hypothesis states that changes in these environmental factors do affect species richness.
+
+## **2. METHODOLOGY**
+The dataset was collected by Daniel Trovillion and Erin Sauer from University of Wisconsin, Madison from May to August in 2019 and 2020. 272 sites were sampled at 68 ponds (17 urban ponds, 29 green space ponds, and 22 rural ponds). Eight evenly spaced dipnet sweep were conducted around the pond perimeter (D-frame dipnet, 600cm2 net opening, 3mm mesh, 1m in length sweeps) and at least three seine net hauls (3m drag length, 1×2m net size, 4mm mesh) were conducted in the deeper pond regions. The independent variable includes water temperature, conductivity, dissolved oxygen, salinity, pond type, pH, and chloride. Our dependent variable is species richness. Species identification occurred in a laboratory. pH, chloride (mg/L), and dissolved oxygen (%) levels were collected using a YSI Pro Plus handheld meter, placed approximately two to three m from the shore at 0.5 m below the water’s surface. We used linear models to explore relationships between continuous variables (e.g., species richness and environmental factors), and hierarchical models to address the nested structure of the data (ponds categorized into different types) in R. Missing data was removed from our final analysis. We checked our assumptions by plotting residuals through qqplots & qqnorms to test for normality of our data residuals.
+
+## **4. DISCUSSION/CONCLUSION**
+fit1<-lm(Animal.Rich ~Salinity+Conductivity+ pH+ Water.Temp+DO.mg+
+Chloride+Round+total_non_animal_rich+Pond.Type, data = pond_data_select )
+
+```{r echo=FALSE}
+fit1<-lm(Animal.Rich ~Salinity+Conductivity+ pH+ Water.Temp+DO.mg+ Chloride+Round+total_non_animal_rich+Pond.Type, data = pond_data_select )
+summary(fit1)
+plot(fit1)
+
+ggplot(pond_data_select, aes(x = pH, y = Animal.Rich, color = Pond.Type)) +
+  geom_point() +
+  labs(y = "Animal Richness", x = "pH", color = "Pond Type") +
+  theme_minimal()
+
+ggplot(pond_data_select, aes(x = total_non_animal_rich, y = Animal.Rich, color = Pond.Type)) +
+  geom_point() +
+  labs(y = "Animal Richness", x = "total_non_animal_rich", color = "Pond Type") +
+  theme_minimal()
+
+```
+
+For the linear regression model exploring the relationship between animal species richness and various environmental factors, the residuals of the model, which measure the differences between observed and predicted values, span a wide range, indicating variability in the model's predictive accuracy across the dataset. Specifically, the residuals ranged from -13.2481 to 12.9397, with a median very close to zero, suggesting that while there are both under and overpredictions, on average, the model's predictions align closely with the actual values.
+
+The regression coefficients highlight that only a few of the studied environmental factors significantly impact animal species richness. For the significant variable, the coefficient of pH is -1.72, the coefficient for total non animal richness is 0.4822727, and the coefficient of Pond.TypeRural is 2.8980578. Notably, pH has significant negative effects implying that an increase in pH is associated with a decrease in animal species richness. Conversely, the total richness of non-animal species and Pond. TypeRural are positively correlated with animal species richness, suggesting that habitats with a greater diversity of non-animal species also tend to support a higher richness of animal species. Other variables, such as Salinity, Conductivity, Water Temperature, Dissolved Oxygen, and Chloride concentration, were not found to significantly affect animal species richness. Note that in regression models, when dealing with categorical variables with more than two levels, one level is usually omitted and used as the reference or baseline category. For this particular case, Pond.Type has levels: "Green Space", "Rural", and "Urban". But green space is used as the reference for other two. 
+
+The Multiple R-squared value of 0.3058 reveals that approximately 30.58% of the variance in animal species richness can be accounted for by the model’s predictors. However, the Adjusted R-squared value, which corrects for the number of predictors, is 0.246, suggesting that the actual explanatory power of the model is somewhat lower when taking into account the number of variables included. 
+
+fit2<-lm(Animal.Rich~Pond.Type+pH+total_non_animal_rich, data = pond_data_select )
+
+The pH and total_non_animal_rich variables show strong statistical significance (with p-values of 0.006151 and 0.000136 , respectively), indicating a reliable association with animal richness. The expected value of animal richness when all predictor variables are at their reference levels is 29.0954. The coefficient of pH is -1.7191. The coefficient of Pond.TypeRural is 3.6064. The coefficient of total_non_animal_rich is 0.5386. Rural ponds are expected to have an animal richness that is 3.6064 units higher than the baseline pond type. For each unit increase in pH, animal richness is expected to decrease by 1.7191 units. For each unit increase in total non-animal richness, animal richness is expected to increase by 0.5386 units. 
+A negative coefficient for pH suggests that animal richness decreases as pH increases, whereas a positive coefficient for total non-animal richness implies that animal richness increases with the richness of non-animal entities in the pond.Pond.TypeRural is also statistically significant (p-value = 0.037852), suggesting that rural ponds tend to have higher animal richness compared to the baseline pond type. The positive coefficient indicates an increase in animal richness associated with rural ponds.Conversely, Pond.TypeUrban and Round do not show statistical significance, indicating less reliable evidence of their impact on animal richness within this dataset.
+The model's Multiple R-squared value of 0.3009 means that approximately 30.09% of the variability in animal richness is explained by the included variables, which is nearly consistent with the previous model despite having fewer variables. This suggests a good fit for the core variables retained.
+The simplified linear model reaffirms the importance of pH and total non-animal richness as significant predictors of animal richness in ponds, with the addition of pond type (specifically rural) as another key factor.
+
+fit3 <- lmer(Animal.Rich ~total_non_animal_rich+pH+(1|Pond.Type), data = pond_data_select )
+
+The linear mixed model analysis delves into the influence of total non-animal richness and pH levels on animal richness within ponds, while accounting for variability across different pond types through random effects.
+The REML criterion, which reached 810.3 at convergence, serves as a measure of the model's fit, indicating its adequacy in capturing the relationship between the predictors and the response variable. The scaled residuals, ranging from -2.47887 to 2.28741, suggest a generally good fit, with a median very close to zero, though the presence of some outliers points to potential deviations from the model's assumptions or the presence of unaccounted-for variability.
+A key feature of this model is its treatment of pond type as a random effect, where the variance (5.809) and standard deviation (2.410) associated with the intercept across pond types underscore the significant baseline differences in animal richness among pond types. This variability is crucial for understanding how pond type influences animal richness beyond the fixed effects of non-animal richness and pH.
+pH has a negative coefficient of -1.7256, indicating that an increase in pH is associated with a decrease in animal richness. The fixed effects coefficients show that for each unit increase in total non-animal richness, animal richness increases by 0.5542 units. The intercept, set at 29.6499, represents the estimated animal richness when total non-animal richness and pH are at their reference levels , within the average pond type (green space).Regarding the fixed effects, the model reveals a positive association between total non-animal richness and animal richness, indicating that environments with a greater variety of non-animal life tend to support a higher diversity of animal species. Conversely, the negative coefficient for pH suggests that higher pH levels, or more alkaline conditions, may adversely affect animal richness, pointing towards a preference for more neutral or slightly acidic conditions for optimal biodiversity in pond ecosystems.
+Furthermore, the strong negative correlation between the intercept and pH (-0.912) highlights the significant, inverse relationship between pH levels and the baseline animal richness established by the intercept. This implies that as pH deviates from neutral towards alkaline, the inherent animal richness of ponds, on average, decreases.
+
+Overall, the animal richness varies significantly in urban, rural and green space. The pH has a strong negative effect on animal richness, and total non-animal richness has a positive effect on animal richness, but not as strong as pH.
+
+Given that different types of lakes (holomictic, meromictic, etc.) have different critical ranges of characteristics for species richness, our scope of inference applies to lakes that are non-meromictic, as our lake data came from non-meromictic systems. Given that our data covered urban, rural, and green space lakes, our scope of inference extends to these three landscapes.
+
+The found results aligned with our initial expectation that pH would have a strong effect on animal richness, and that increasing pH would decrease animal richness. However, it was unexpected that salinity did not show a statistically significant or meaningfully significant effect on animal richness. This may be due in part to the fact that certain species are more adapted to (or tolerant of) higher salinity levels, or have wide thresholds before displaying any negative health outcomes. The dataset did not provide the tolerance level of different species, though this may have played a role in the salinity outcome we observed. Another expected outcome was that urban ponds would have less animal richness than rural ponds, but we did not find any statistical or meaningfully significant difference for urban ponds. 
+
+A key limitation of the study is lack of nitrate data - the number of missing values in the dataset meant that the column of data couldn’t be included without the risk of extrapolation. Nitrate is a key nutrient that is crucial for sustaining animal life, affects plant growth, and can affect anoxic conditions of a waterbody (excess nitrate can cause algal blooms & consequent algal die-offs, and lead to plummeting dissolved oxygen levels.
+
+##** 5. DESCRIPTION OF EACH PARTICIPANT’S ROLE ON PROJECT**
+All group members participated in the creation of code for this project, as well as writing for the introduction, analysis, and interpretation of the code. Group members split the writing portion up amongst ourselves so that everyone contributed to the final analysis document.
+
+
+## ** 6. BIBLIOGRAPHY**
+a. Use a consistent, recognized format for putting together the bibliography, such as ESA (Ecological Society of America).
+
+Oertli, B., and K. M. Parris. 2019.“Review: Toward Management ofUrban Ponds for Freshwater Biodiversity.” Ecosphere, 10(7) .https://doi.org/10.1002/ecs2.2810 
+
+Sax, D.F. & Gaines, S.D. (2003) Species diversity: from global decreases to local increases.Trends in Ecology & Evolution,18, 561–566. https://doi.org/10.1016/S0169-5347(03)00224-6 
+
+
+## Appendix
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+library(cowplot)
+```
+
+
+```{r}
+pond_data_raw <- read.csv(file = "Project/CFLdataset2022.csv",  header = T)
+
+pond_data_select <- pond_data_raw %>%
+  select(Round, Pond.Type, Site.Code, Name, Month, Animal.Rich, Total.Rich, Salinity, Conductivity,Sp.Condunctivity,av.DO,av.pH, pH, Water.Temp, DO.mg, Chloride) %>%
+  drop_na() %>%
+  mutate(total_non_animal_rich = Total.Rich - Animal.Rich)
+```
+, echo= FALSE}
+month5 <- subset(pond_data_select, Month == 5)
+month6 <- subset(pond_data_select, Month == 6)
+month7 <- subset(pond_data_select, Month == 7)
+month8 <- subset(pond_data_select, Month == 8)
+```
+
+```{r salinity model}
+salinity_fit <- lm(Animal.Rich ~ Salinity, data = pond_data_select)
+summary(salinity_fit)
+
+par(mfrow=c(2,2))
+
+sal_plot <- 
+  ggplot(pond_data_select,
+         aes(x = Salinity, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE, aes(group=factor(Month)))+
+  labs(title="Effect of Salinity on Animal Richess by Month",
+       fontface = "bold", 
+       color = "Month Number")+
+  ylab("Animal Richness")+
+  xlab("Salinity")
+sal_plot
+
+```
+
+```{r pH model}
+pH_fit <- lm(Animal.Rich ~ pH, data = pond_data_select)
+summary(pH_fit)
+
+pH_plot <- 
+  ggplot(pond_data_select,
+         aes(x = pH, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE, aes(group=factor(Month)))+
+  labs(title="Effect of pH on Animal Richess by Month",
+       fontface = "bold", 
+       color = "Month Number")+
+  ylab("Animal Richness")+
+  xlab("pH")
+pH_plot
+```
+
+```{r Conductivity plot}
+conduct_fit <- lm(Animal.Rich ~ Conductivity, data = pond_data_select)
+summary(conduct_fit)
+
+conduct_plot <- 
+  ggplot(pond_data_select,
+         aes(x = Conductivity, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE, aes(group=factor(Month)))+
+  labs(title="Effect of Conductivity on Animal Richess by Month",
+       fontface = "bold", 
+       color = "Month Number")+
+  ylab("Animal Richness")+
+  xlab("Conductivity")
+conduct_plot
+```
+
+
+```{r month fit}
+month_fit <- lm(Animal.Rich ~ Month, data = pond_data_select)
+summary(month_fit)
+
+month_plot <- 
+  ggplot(pond_data_select,
+         aes(x = Month, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE)+
+  labs(title="Animal Richness by Month",
+       fontface = "bold")+
+  ylab("Animal Richness")+
+  xlab("Month Number")
+month_plot
+
+
+```
+
+```{r Pond Type fit}
+pondtype_fit <- lm(Animal.Rich ~ Pond.Type, data = pond_data_select)
+summary(pondtype_fit)
+
+pondtype_plot <- 
+  ggplot(pond_data_select,
+         aes(x = Pond.Type, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE)+
+  labs(title="Animal Richness by Month",
+       fontface = "bold")+
+  ylab("Animal Richness")+
+  xlab("Pond Type")
+pondtype_plot
+
+
+single_factor_layout <- plot_grid(pH_plot, sal_plot, conduct_plot, month_plot)
+single_factor_layout
+```
+
+```{r richness all variables}
+all_rich_fit <- lm(Animal.Rich ~ Salinity + Conductivity + pH + Pond.Type, data = pond_data_select)
+summary(all_rich_fit)
+
+all_plot <- 
+  ggplot(pond_data_select,
+         aes(x = predict(all_rich_fit, type = "response"), y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = glm, se = FALSE)+
+  labs(title="Animal Richness by Salinity + Month + Conductivity + pH",
+       fontface = "bold")+
+  ylab("Animal Richness")+
+  xlab("Salinity + Month + Conductivity + pH")
+all_plot
+
+#check assumptions of all plot
+plot(all_rich_fit)
+
+```
+
+```{r Descriptive Statistics of Variables}
+summary(pond_data_select$Salinity)
+sd(pond_data_select$Salinity)
+var(pond_data_select$Salinity)
+str(pond_data_select$Salinity)
+
+summary(pond_data_select$Conductivity)
+sd(pond_data_select$Conductivity)
+var(pond_data_select$Conductivity)
+str(pond_data_select$Conductivity)
+
+summary(pond_data_select$av.DO)
+sd(pond_data_select$av.DO)
+var(pond_data_select$av.DO)
+str(pond_data_select$av.DO)
+
+summary(pond_data_select$Pond.Type)
+sd(pond_data_select$Pond.Type)
+var(pond_data_select$Pond.Type)
+str(pond_data_select$Pond.Type)
+
+summary(pond_data_select$DO.mg)
+sd(pond_data_select$DO.mg)
+var(pond_data_select$DO.mg)
+str(pond_data_select$DO.mg)
+
+summary(pond_data_select$Water.Temp)
+sd(pond_data_select$Water.Temp)
+var(pond_data_select$Water.Temp)
+str(pond_data_select$Water.Temp)
+```
+
+```{r Table, echo=TRUE}
+# Create data frame
+Variable <- c("Salinity", "Conductivity", "Av. DO", "Pond Type", "DO.mg", "Water Temp")
+num_observation <- c(133, 133, 133, 133, 133, 133)
+mean <- c(0.1539, 294, 6.21, NA, 6.55, 21.59)
+median <- c(0.11, 235.5, 5.59, NA, 5.4, 22.0)
+sd <- c(0.136, 240.73, 3.65, NA, 7.41, 4.06)
+variance <- c(0.0186, 57952.07, 13.35, NA, 54.85, 16.49)
+
+data <- data.frame(Variable = Variable,
+                   `Num. Observation` = num_observation,
+                   Mean = mean,
+                   Median = median,
+                   SD = sd,
+                   Variance = variance)
+
+# Print the table
+knitr::kable(data)
+```
+
+
+
+```{r}
+fit1<-lm(Animal.Rich ~Salinity+Conductivity+ pH+ Water.Temp+DO.mg+ Chloride+Round+total_non_animal_rich+Pond.Type, data = pond_data_select )
+summary(fit1)
+plot(fit1)
+
+ggplot(pond_data_select, aes(x = pH, y = Animal.Rich, color = Pond.Type)) +
+  geom_point() +
+  labs(y = "Animal Richness", x = "pH", color = "Pond Type") +
+  theme_minimal()
+
+ggplot(pond_data_select, aes(x = total_non_animal_rich, y = Animal.Rich, color = Pond.Type)) +
+  geom_point() +
+  labs(y = "Animal Richness", x = "total_non_animal_rich", color = "Pond Type") +
+  theme_minimal()
+
+```
+
+```{r}
+fit2<-lm(Animal.Rich~Pond.Type+pH+total_non_animal_rich, data = pond_data_select )
+summary(fit2)
+```
+
+```{r}
+fit3 <- lmer(Animal.Rich ~total_non_animal_rich+pH+(1|Pond.Type), data = pond_data_select )
+summary(fit3)
+```
