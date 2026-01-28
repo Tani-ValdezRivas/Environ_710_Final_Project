@@ -1,0 +1,122 @@
+---
+title: "Final_Project"
+output: pdf_document
+date: "2024-04-03"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE}
+#Downloading library
+library(tidyverse)
+library(ggplot2)
+
+# Reading in data
+setwd("~/Statistics/Final_Project/Data")
+pond_data_raw <- read.csv("CFLdataset2022.csv", header = T)
+
+```
+
+```{r}
+pond_data_select <- pond_data_raw %>%
+  select(Salinity, Conductivity, Sp.Condunctivity, av.DO, av.Sal, Animal.Rich, Site.Code, Name, Month, pH, av.pH) %>%
+  drop_na 
+
+# how does month impact species richness?
+month5 <- subset(pond_data_select, Month == 5)
+month6 <- subset(pond_data_select, Month == 6)
+month7 <- subset(pond_data_select, Month == 7)
+month8 <- subset(pond_data_select, Month == 8)
+
+```
+
+
+```{r}
+
+# Salinity only model
+
+salinity_fit <- lm(Animal.Rich ~ Salinity, data = pond_data_select)
+summary(salinity_fit)
+
+sal_plot <- 
+  ggplot(pond_data_select,
+         aes(x = Salinity, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE, aes(group=factor(Month)))+
+  labs(title="Effect of Salinity on Animal Richess by Month",
+       fontface = "bold", 
+       color = "Month Number”) +
+  ylab("Animal Richness")+
+  xlab("Salinity")
+sal_plot
+
+```
+
+```{r}
+# pH only plot
+pH_fit <- lm(Animal.Rich ~ pH, data = pond_data_select)
+summary(pH_fit)
+
+pH_plot <- 
+  ggplot(pond_data_select,
+         aes(x = pH, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE, aes(group=factor(Month)))+
+  labs(title="Effect of pH on Animal Richess by Month",
+       fontface = "bold", 
+       color = "Month Number")+
+  ylab("Animal Richness")+
+  xlab("pH")
+pH_plot
+```
+
+```{r}
+# Conductivity only plot
+
+conduct_fit <- lm(Animal.Rich ~ Conductivity, data = pond_data_select)
+summary(conduct_fit)
+
+conduct_plot <- 
+  ggplot(pond_data_select,
+         aes(x = Conductivity, y = Animal.Rich, color = factor(Month)))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE, aes(group=factor(Month)))+
+  labs(title = "Effect of Conductivity on Animal Richess by Month",
+       fontface = "bold", color = "Month Number", ylab("Animal Richness"), 
+       xlab("Conductivity")
+conduct_plot
+
+
+```
+
+```{r}
+# Month only plot (maybe for appendix?)
+
+month_fit <- lm(Animal.Rich ~ Month, data = pond_data_select)
+summary(month_fit)
+
+month_plot <- 
+  ggplot(pond_data_select,
+         aes(x = Month, y = Animal.Rich))+
+  geom_point()+
+  geom_smooth(method = lm, se = FALSE)+
+  labs(title="Animal Richness by Month",
+       fontface = "bold")+
+  ylab("Animal Richness")+
+  xlab("Month Number")
+month_plot
+
+```
+
+```{r}
+Combining single factor plots into 1 plot
+single_factor_layout <- plot_grid(pH_plot, sal_plot, conduct_plot, month_plot)
+single_factor_layout
+
+```
+
+
+
+
